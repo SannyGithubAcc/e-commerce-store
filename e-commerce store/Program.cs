@@ -47,7 +47,7 @@ builder.Services.AddMvcCore(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "e-commerce store API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "e-commerce store API2", Version = "v1" });
     c.DescribeAllParametersInCamelCase();
 
 });
