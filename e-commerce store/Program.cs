@@ -3,32 +3,38 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using e_commerce_store.Data;
-using e_commerce_store.Interfaces;
-using e_commerce_store.Repositories;
-using e_commerce_store.Services;
 using e_commerce_store.Exceptions;
 using Azure.Identity;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Identity.Web;
+using System.Net.Http.Headers;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+// Configure authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-builder.Configuration.AddAzureKeyVault(new Uri(builder.Configuration["KeyVault:Endpoint"]), new DefaultAzureCredential());
-var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(
-    new AzureServiceTokenProvider().KeyVaultTokenCallback));
+//builder.Configuration.AddAzureKeyVault(new Uri(builder.Configuration["KeyVault:Endpoint"]), new DefaultAzureCredential());
+//var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(
+//    new AzureServiceTokenProvider().KeyVaultTokenCallback));
 
-string secretValue = keyVaultClient.GetSecretAsync(builder.Configuration["KeyVault:Endpoint"].ToString(),
-    builder.Configuration["KeyVault:SecretName"]).Result.Value;
+//string secretValue = keyVaultClient.GetSecretAsync(builder.Configuration["KeyVault:Endpoint"].ToString(),
+//    builder.Configuration["KeyVault:SecretName"]).Result.Value;
 
-builder.Services.AddDbContext<EcommerceStoreDbContext>(options => options.UseSqlServer(secretValue));
-builder.Services.AddApplicationInsightsTelemetry();
+//builder.Services.AddDbContext<EcommerceStoreDbContext>(options => options.UseSqlServer(secretValue));
+//builder.Services.AddApplicationInsightsTelemetry();
 
 //var connectionString = builder.Configuration.GetConnectionString("constring");
 //Console.WriteLine($"Retrieved connection string: {connectionString}");
 
-//builder.Services.AddDbContext<EcommerceStoreDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-//        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
+builder.Services.AddDbContext<EcommerceStoreDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
 
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers()
@@ -39,18 +45,47 @@ builder.Services.AddControllers()
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IMembershipRepository, MembershipRepository>();
+builder.Services.AddScoped<IMembershipService, MembershipService>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddMvcCore(options =>
 {
     options.Filters.Add(typeof(CustomExceptionFilter));
 })
     .AddApiExplorer();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "e-commerce store API2", Version = "v1" });
-    c.DescribeAllParametersInCamelCase();
-
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
@@ -59,7 +94,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
 
 }
 else
@@ -68,5 +106,8 @@ else
 }
 app.UseHttpsRedirection();
 app.UseAuthorization();
+// Use middleware to obtain an access token
+
+
 app.MapControllers();
 app.Run();

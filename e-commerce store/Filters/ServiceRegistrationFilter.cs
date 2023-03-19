@@ -2,7 +2,7 @@
 
 namespace e_commerce_store.DependencyInjection
 {
-    public static class DependencyInjection
+    public static class ServiceRegistrationFilter
     {
         public static void AddDependencies(this IServiceCollection services, string connectionString)
         {

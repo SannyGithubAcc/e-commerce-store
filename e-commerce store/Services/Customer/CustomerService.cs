@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using e_commerce_store.Dto;
 using e_commerce_store.Exceptions;
-using e_commerce_store.Interfaces;
 using e_commerce_store.Models;
 
-namespace e_commerce_store.Services
-{
+
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _customerRepository;
@@ -56,4 +54,4 @@ namespace e_commerce_store.Services
             await _customerRepository.DeleteCustomer(existingCustomer);
         }
     }
-}
+

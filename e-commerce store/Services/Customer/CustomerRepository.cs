@@ -1,11 +1,8 @@
 ﻿using e_commerce_store.Data;
 using e_commerce_store.Exceptions;
-using e_commerce_store.Interfaces;
 using e_commerce_store.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace e_commerce_store.Repositories
-{
 
     public class CustomerRepository : ICustomerRepository
     {
@@ -75,9 +72,6 @@ namespace e_commerce_store.Repositories
 
             try
             {
-                if (_dbContext.IsConnected()) { 
-                
-                }
                 return await _dbContext.Customer.ToListAsync();
             }
             catch (Exception ex)
@@ -102,4 +96,4 @@ namespace e_commerce_store.Repositories
         }
     }
 
-}
+

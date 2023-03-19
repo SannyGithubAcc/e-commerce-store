@@ -1,7 +1,6 @@
 ﻿using e_commerce_store.Dto;
 
-namespace e_commerce_store.Interfaces
-{
+
     public interface ICustomerService
     {
         Task<IEnumerable<CustomerDto>> GetAllCustomers();
@@ -11,4 +10,4 @@ namespace e_commerce_store.Interfaces
         Task DeleteCustomer(int id);
     }
 
-}
+
