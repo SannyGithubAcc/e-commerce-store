@@ -41,14 +41,13 @@ namespace e_commerce_store.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Get a customer by id")]
         public async Task<ActionResult<CustomerDto>> GetCustomerById(int id)
         {
             try
             {
                 var customer = await _customerService.GetCustomerById(id);
+                if(customer == null) return NotFound();
                 return Ok(customer);
             }
             catch (CustomException ex)
@@ -91,8 +90,6 @@ namespace e_commerce_store.Controllers
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Update a customer by id")]
         public async Task<IActionResult> UpdateCustomer(int id, CustomerUpdateDto customerUpdateDto)
         {
@@ -117,7 +114,7 @@ namespace e_commerce_store.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Delete a customer by id")]
-        public async Task<IActionResult> DeleteCustomer(int id)
+        public async Task<ActionResult> DeleteCustomer(int id)
         {
             try
             {

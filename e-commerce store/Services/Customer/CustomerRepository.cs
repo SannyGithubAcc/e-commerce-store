@@ -82,18 +82,30 @@ using Microsoft.EntityFrameworkCore;
         }
 
 
-        public async Task UpdateCustomer(Customer Customers)
+    public async Task UpdateCustomer(Customer customer)
+    {
+        try
         {
-            try
+            var existingCustomer = await _dbContext.Customer.FindAsync(customer.Id);
+            if (existingCustomer == null)
             {
-                _dbContext.Entry(Customers).State = EntityState.Modified;
-                await _dbContext.SaveChangesAsync();
+                throw new CustomException($"Customer with ID {customer.Id} not found.", 404);
             }
-            catch (Exception ex)
-            {
-                throw new CustomException("Error updating Customers.", ex, 500);
-            }
+
+            // Copy the updated properties from the detached entity to the tracked entity
+            _dbContext.Entry(existingCustomer).CurrentValues.SetValues(customer);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (CustomException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new CustomException("Error updating customer.", ex, 500);
         }
     }
+
+}
 
 
