@@ -7,8 +7,6 @@
         Task<OrderDto> CreateAsync(CreateOrderDto createOrderDto);
         Task<OrderDto> UpdateAsync(int id, UpdateOrderDto updateOrderDto);
         Task<bool> DeleteAsync(int id);
-        
-
 }
 
 

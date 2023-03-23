@@ -2,7 +2,7 @@
 {
     public class CustomException : Exception
     {
-        private int v;
+        private readonly int  v;
 
         public int StatusCode { get; set; }
 
