@@ -1,12 +1,13 @@
 ﻿
+using e_commerce_store.Models.Dto.Order;
 using e_commerce_store.Models.Dto.ProductDto;
 
 public interface IProductService
     {
-        Task<IEnumerable<OrderDto>> GetProductsAsync();
-        Task<OrderDto> GetProductByIdAsync(int id);
-        Task<OrderDto> CreateProductAsync(CreateUpdateProductDto productDto);
-        Task<OrderDto> UpdateProductAsync(int id, CreateUpdateProductDto productDto);
+        Task<IEnumerable<ProductDto>> GetProductsAsync();
+        Task<ProductDto> GetProductByIdAsync(int id);
+        Task<ProductDto> CreateProductAsync(CreateUpdateProductDto productDto);
+        Task<ProductDto> UpdateProductAsync(int id, CreateUpdateProductDto productDto);
         Task DeleteProductAsync(int id);
     }
 

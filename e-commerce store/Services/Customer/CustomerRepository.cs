@@ -14,33 +14,33 @@ using Microsoft.EntityFrameworkCore;
         }
 
 
-        public async Task<Customer> AddCustomer(Customer customer)
+        public async Task<Customer> AddCustomer(Customer Customers)
         {
             try
             {
-                await _dbContext.Customer.AddAsync(customer);
+                await _dbContext.Customer.AddAsync(Customers);
                 await _dbContext.SaveChangesAsync();
 
             }
             catch (Exception ex)
             {
-                throw new CustomException("Error adding customer.", ex, 500);
+                throw new CustomException("Error adding Customers.", ex, 500);
             }
-            return customer;
+            return Customers;
         }
 
 
-        public async Task DeleteCustomer(Customer? customer)
+        public async Task DeleteCustomer(Customer? Customers)
         {
             try
             {
-                var existingCustomer = await _dbContext.Customer.FindAsync(customer.Id);
-                if (existingCustomer == null)
+                var existingCustomers = await _dbContext.Customer.FindAsync(Customers.Id);
+                if (existingCustomers == null)
                 {
-                    throw new CustomException($"Customer with ID {customer.Id} not found.", 404);
+                    throw new CustomException($"Customers with ID {Customers.Id} not found.", 404);
                 }
 
-                _dbContext.Customer.Remove(existingCustomer);
+                _dbContext.Customer.Remove(existingCustomers);
                 await _dbContext.SaveChangesAsync();
             }
             catch (CustomException ex)
@@ -49,7 +49,7 @@ using Microsoft.EntityFrameworkCore;
             }
             catch (Exception ex)
             {
-                throw new CustomException("Error deleting customer.", ex, 500);
+                throw new CustomException("Error deleting Customers.", ex, 500);
             }
         }
 
@@ -63,7 +63,7 @@ using Microsoft.EntityFrameworkCore;
             }
             catch (Exception ex)
             {
-                throw new CustomException("Error getting customer.", ex, 500);
+                throw new CustomException("Error getting Customers.", ex, 500);
             }
         }
 
@@ -76,22 +76,22 @@ using Microsoft.EntityFrameworkCore;
             }
             catch (Exception ex)
             {
-                throw new CustomException("Error getting customers.", ex, 500);
+                throw new CustomException("Error getting Customerss.", ex, 500);
             }
 
         }
 
 
-        public async Task UpdateCustomer(Customer customer)
+        public async Task UpdateCustomer(Customer Customers)
         {
             try
             {
-                _dbContext.Entry(customer).State = EntityState.Modified;
+                _dbContext.Entry(Customers).State = EntityState.Modified;
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new CustomException("Error updating customer.", ex, 500);
+                throw new CustomException("Error updating Customers.", ex, 500);
             }
         }
     }

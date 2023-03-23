@@ -13,11 +13,13 @@ using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Web;
+using e_commerce_store.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 // Configure authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 //builder.Configuration.AddAzureKeyVault(new Uri(builder.Configuration["KeyVault:Endpoint"]), new DefaultAzureCredential());
 //var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(
@@ -51,6 +53,9 @@ builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+builder.Services.AddScoped<IOrderProductRepository, OrderProductRepository>();
+builder.Services.AddScoped<IOrderProductService, OrderProductService>();
+
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddMvcCore(options =>
@@ -61,7 +66,7 @@ builder.Services.AddMvcCore(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "E-commerce API", Version = "v1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
@@ -87,16 +92,13 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "E-commerce API V1");
     });
 
 }
@@ -105,9 +107,17 @@ else
     app.UseExceptionHandler("/error");
 }
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
-// Use middleware to obtain an access token
-
-
+app.UseRouting();
+app.Use(async (context, next) =>
+{
+    var token = config.GetValue<string>("Token");
+    var middleware = new TokenAuthenticationMiddleware(next, token);
+    await middleware.Invoke(context);
+});
 app.MapControllers();
 app.Run();
+
+
+

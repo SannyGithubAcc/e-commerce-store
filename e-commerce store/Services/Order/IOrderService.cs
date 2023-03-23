@@ -1,12 +1,14 @@
-﻿
-using e_commerce_store.Models.Dto.Order;
+﻿using e_commerce_store.Models.Dto.Order;
 
-public interface IOrderService
+    public interface IOrderService
     {
-        Task<IEnumerable<OrderDto>> GetAllAsync();
-        Task<OrderDto> UpdateAsync(UpdateOrderDto order);
-        Task<OrderDto> CreateAsync(CreateOrderDto order);
-        Task DeleteAsync(int id);
-    Task<OrderDto> GetByIdAsync(int id);
-    }
+        Task<OrderDto> GetByIdAsync(int id);
+        Task<List<OrderDto>> GetAllAsync();
+        Task<OrderDto> CreateAsync(CreateOrderDto createOrderDto);
+        Task<OrderDto> UpdateAsync(int id, UpdateOrderDto updateOrderDto);
+        Task<bool> DeleteAsync(int id);
+        
+
+}
+
 

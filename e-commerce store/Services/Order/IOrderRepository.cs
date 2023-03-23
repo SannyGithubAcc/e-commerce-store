@@ -1,8 +1,11 @@
-﻿public interface IOrderRepository
+﻿
+public interface IOrderRepository
 {
-    Task<IEnumerable<Order>> GetAllAsync();
-    Task<Order> GetByIdAsync(int id);
-    Task<Order> CreateAsync(Order order);
-    Task<Order> UpdateAsync(Order order);
-    Task DeleteAsync(int id);
-}
+
+            Task<Order> GetByIdAsync(int id);
+            Task<List<Order>> GetAllAsync();
+            Task<Order> CreateAsync(Order membership);
+            Task<Order> UpdateAsync(Order membership);
+            Task<bool> DeleteAsync(int id);
+    }
+

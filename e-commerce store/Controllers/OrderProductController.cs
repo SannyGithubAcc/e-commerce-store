@@ -1,4 +1,6 @@
 ﻿using e_commerce_store.Models.Dto.Order;
+using e_commerce_store.Models.Dto.OrderProduct;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
@@ -8,38 +10,30 @@ namespace e_commerce_store.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrderController : ControllerBase
+    public class OrderProductController : ControllerBase
     {
-        private readonly IOrderService _OrderService;
+        private readonly IOrderProductService _orderProductService;
 
-        public OrderController(IOrderService orderService)
+        public OrderProductController(IOrderProductService orderService)
         {
-            _OrderService = orderService;
+            _orderProductService = orderService;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<OrderDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<OrderProductDto>), (int)HttpStatusCode.OK)]
         public IActionResult GetAll()
         {
-            var orders = _OrderService.GetAllAsync();
-            try
-            {
-  
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var orders = _orderProductService.GetAllAsync();
 
+            return Ok(orders);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(OrderDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(OrderProductDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public IActionResult GetById(int id)
         {
-            var order = _OrderService.GetByIdAsync(id);
+            var order = _orderProductService.GetByIdAsync(id);
 
             if (order == null)
             {
@@ -49,30 +43,31 @@ namespace e_commerce_store.Controllers
             return Ok(order);
         }
 
-    
+        [HttpPost]
+        [ProducesResponseType(typeof(OrderProductDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation(Summary = "Create a Order")]
-        public async Task<ActionResult<OrderDto>> Create(CreateOrderDto createDto)
+        [SwaggerOperation(Summary = "Create a OrderProduct")]
+        public async Task<ActionResult<OrderProductDto>> Create(CreateOrderProductDto createDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var order = await _OrderService.CreateAsync(createDto);
-           
+            var order = await _orderProductService.CreateAsync(createDto);
 
             return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(OrderDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(OrderProductDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<OrderDto>> Update(int id, [FromBody] UpdateOrderDto updateDto)
+        public async Task<ActionResult<OrderProductDto>> Update(int id, [FromBody] UpdateOrderProductDto updateDto)
         {
             if (!ModelState.IsValid)
             {
@@ -86,7 +81,7 @@ namespace e_commerce_store.Controllers
 
             try
             {
-                var order = await _OrderService.UpdateAsync(id, updateDto);
+                var order = await _orderProductService.UpdateAsync(updateDto);
 
                 return Ok(order);
             }
@@ -103,7 +98,7 @@ namespace e_commerce_store.Controllers
         {
             try
             {
-                _OrderService.DeleteAsync(id);
+                _orderProductService.DeleteAsync(id);
 
                 return NoContent();
             }
@@ -112,8 +107,6 @@ namespace e_commerce_store.Controllers
                 return NotFound(ex.Message);
             }
         }
-
-
     }
 
 }

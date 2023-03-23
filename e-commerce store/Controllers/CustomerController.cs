@@ -8,8 +8,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace e_commerce_store.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -71,6 +71,10 @@ namespace e_commerce_store.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
                 var addedCustomer = await _customerService.AddCustomer(customerCreateDto);
                 return CreatedAtAction(nameof(GetCustomerById), new { id = addedCustomer.Id }, addedCustomer);
             }
