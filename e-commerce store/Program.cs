@@ -66,7 +66,7 @@ builder.Services.AddMvcCore(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "E-commerce API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "FunBooksAndVideos e-commerce shop", Version = "v1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
@@ -110,12 +110,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRouting();
-app.Use(async (context, next) =>
-{
-    var token = config.GetValue<string>("Token");
-    var middleware = new TokenAuthenticationMiddleware(next, token);
-    await middleware.Invoke(context);
-});
+//app.Use(async (context, next) =>
+//{
+//    var token = config.GetValue<string>("Token");
+//    var middleware = new TokenAuthenticationMiddleware(next, token);
+//    await middleware.Invoke(context);
+//});
 app.MapControllers();
 app.Run();
 

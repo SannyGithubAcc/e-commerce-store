@@ -1,10 +1,23 @@
-﻿namespace e_commerce_store.Models.Dto.Order
+﻿using e_commerce_store.Dto;
+using System.ComponentModel.DataAnnotations;
+
+namespace e_commerce_store.Models.Dto.Order
 {
     public class UpdateOrderDto
     {
         public int Id { get; set; }
-        public int CustomerId { get; set; }
+        [Required]
+        public int Customer_ID { get; set; }
+
+        [Required]
         public DateTime Date { get; set; }
+
+        [Required]
+        [Range(0.01, double.MaxValue)]
         public decimal Price { get; set; }
+
+
+
     }
 }
+

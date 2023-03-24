@@ -46,7 +46,7 @@ public class CustomerRepositoryTests
     {
         // Arrange
         var repository = new CustomerRepository(_dbContext);
-        var customer = new Customer { Name = "John Doe", Email = "johndoe@example.com", Phone = "22222" };
+        var customer = new Customer { Name = "John Doe", Email = "johndoe@example.com", Phone = "22222", IsActive = true };
         _dbContext.Customer.Add(customer);
         await _dbContext.SaveChangesAsync();
 
@@ -73,7 +73,7 @@ public class CustomerRepositoryTests
     {
         // Arrange
         var repository = new CustomerRepository(_dbContext);
-        var customer = new Customer { Name = "John Doe", Email = "johndoe@example.com", Phone = "22222" };
+        var customer = new Customer { Name = "John Doe", Email = "johndoe@example.com", Phone = "22222", IsActive = true };
         _dbContext.Customer.Add(customer);
         await _dbContext.SaveChangesAsync();
 
@@ -107,9 +107,9 @@ public class CustomerRepositoryTests
         var repository = new CustomerRepository(_dbContext);
         var customers = new List<Customer>
         {
-            new Customer { Name = "John Doe", Email = "johndoe@example.com",Phone = "444" },
-            new Customer { Name = "Jane Doe", Email = "janedoe@example.com" ,Phone = "22222"},
-            new Customer { Name = "Bob Smith", Email = "bobsmith@example.com",Phone = "44554" }
+            new Customer { Name = "John Doe", Email = "johndoe@example.com",Phone = "444",IsActive = true },
+            new Customer { Name = "Jane Doe", Email = "janedoe@example.com" ,Phone = "22222",IsActive = true},
+            new Customer { Name = "Bob Smith", Email = "bobsmith@example.com",Phone = "44554",IsActive = true }
         };
         _dbContext.Customer.AddRange(customers);
         await _dbContext.SaveChangesAsync();

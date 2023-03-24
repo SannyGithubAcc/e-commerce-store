@@ -2,8 +2,10 @@
 
 namespace e_commerce_store.Models.Dto.ProductDto
 {
-    public class CreateUpdateProductDto
+    public class CreateProductDto
     {
+
+
 
         [Required]
         [MaxLength(255)]

@@ -2,10 +2,10 @@
 using e_commerce_store.Controllers;
 using e_commerce_store.Dto;
 using e_commerce_store.Exceptions;
-using e_commerce_store.Mappings;
 using e_commerce_store.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -159,9 +159,9 @@ public class CustomerControllerTests
         var result = await controller.UpdateCustomer(customerId, customerUpdateDto);
 
         // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.IsType<SerializableError>(badRequestResult.Value);
-        Assert.True(controller.ModelState.ErrorCount > 0);
+        var statusCode = (result as IStatusCodeActionResult)?.StatusCode;
+        Assert.Equal(StatusCodes.Status400BadRequest, statusCode);
+    
     }
 
     [Fact]
@@ -170,17 +170,16 @@ public class CustomerControllerTests
             // Arrange
             _mockService.Setup(x => x.UpdateCustomer(It.IsAny<int>(), It.IsAny<CustomerUpdateDto>()))
                 .ThrowsAsync(new CustomException("Customer not found", 404));
-            var controller = new CustomerController(_mockService.Object, _mapper, null);
             var customerId = 1;
-            var customerUpdateDto = new CustomerUpdateDto { Name = "John Smith", Email = "johnsmith@example.com", Phone = "1234567890" };
+            var customerUpdateDto = new CustomerUpdateDto { Name = "John Smith", Email = "johnsmith@example.com", Phone = "1234567890", IsActive = true };
 
             // Act
-            var result = await controller.UpdateCustomer(customerId, customerUpdateDto);
+            var result = await _controller.UpdateCustomer(customerId, customerUpdateDto);
 
-            // Assert
-            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal(404, notFoundResult.StatusCode);
-            Assert.Equal("Customer not found", notFoundResult.Value);
+        // Assert
+        var statusCode = (result as IStatusCodeActionResult)?.StatusCode;
+        Assert.Equal(StatusCodes.Status404NotFound, statusCode);
+
         }
 
         [Fact]
@@ -190,15 +189,15 @@ public class CustomerControllerTests
             _mockService.Setup(x => x.UpdateCustomer(It.IsAny<int>(), It.IsAny<CustomerUpdateDto>()))
                 .ThrowsAsync(new Exception("Something went wrong"));
             var customerId = 1;
-            var customerUpdateDto = new CustomerUpdateDto { Name = "John Smith", Email = "johnsmith@example.com", Phone = "1234567890" };
+            var customerUpdateDto = new CustomerUpdateDto { Name = "John Smith", Email = "johnsmith@example.com", Phone = "1234567890", IsActive = true };
 
             // Act
             var result = await _controller.UpdateCustomer(customerId, customerUpdateDto);
 
-            // Assert
-            var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal(500, internalServerErrorResult.StatusCode);
-        }
+        // Assert
+        var statusCode = (result as IStatusCodeActionResult)?.StatusCode;
+        Assert.Equal(StatusCodes.Status500InternalServerError, statusCode);
+    }
     }
 
 

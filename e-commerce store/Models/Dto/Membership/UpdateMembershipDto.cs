@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using e_commerce_store.Models.Dto.Order;
+using System.ComponentModel.DataAnnotations;
 
 namespace e_commerce_store.Dto.Membership
 {
     public class UpdateMembershipDto
     {
-        [Required]
+        public int Id { get; set; }
+        [Display(Name = "Is Active", Description = "Indicates whether the object is active or not")]
         public bool IsActive { get; set; }
 
         [Required]
@@ -17,5 +19,6 @@ namespace e_commerce_store.Dto.Membership
         [Required]
         [Range(0, double.MaxValue)]
         public decimal Price { get; set; }
+    
     }
 }

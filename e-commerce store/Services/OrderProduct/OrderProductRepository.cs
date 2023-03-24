@@ -34,8 +34,7 @@ public class OrderProductRepository : IOrderProductRepository
 
     public async Task<OrderProduct> GetByIdAsync(int id)
     {
-        return await _dbContext.OrderProduct.Include(op => op.Order)
-            .Include(op => op.Product).FirstOrDefaultAsync(o => o.Id == id);
+        return await _dbContext.OrderProduct.FirstOrDefaultAsync(o => o.Id == id);
     }
 
     public async Task<OrderProduct> CreateAsync(OrderProduct order)

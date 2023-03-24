@@ -10,7 +10,7 @@
         public decimal Price { get; set; }
         public string Category { get; set; }
 
-        public List<OrderProduct> OrderProducts { get; set; }
+
     }
 
 }

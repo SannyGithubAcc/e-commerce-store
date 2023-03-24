@@ -72,7 +72,17 @@ namespace e_commerce_store.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    string errors = "";
+
+                    foreach (var key in ModelState.Keys)
+                    {
+                        foreach (var error in ModelState[key].Errors)
+                        {
+                            errors += $"{key}: {error.ErrorMessage}\n";
+                        }
+                    }
+
+                    return BadRequest(errors);
                 }
                 var addedCustomer = await _customerService.AddCustomer(customerCreateDto);
                 return CreatedAtAction(nameof(GetCustomerById), new { id = addedCustomer.Id }, addedCustomer);
@@ -90,18 +100,34 @@ namespace e_commerce_store.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Update a customer by id")]
         public async Task<IActionResult> UpdateCustomer(int id, CustomerUpdateDto customerUpdateDto)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    string errors = "";
+
+                    foreach (var key in ModelState.Keys)
+                    {
+                        foreach (var error in ModelState[key].Errors)
+                        {
+                            errors += $"{key}: {error.ErrorMessage}\n";
+                        }
+                    }
+
+                    return BadRequest(errors);
+                }
                 await _customerService.UpdateCustomer(id, customerUpdateDto);
                 return NoContent();
             }
             catch (CustomException ex)
             {
                 _logger.LogError(ex, $"Error updating customer with id {id}");
-                return StatusCode(ex.StatusCode, ex.Message);
+                return StatusCode(StatusCodes.Status404NotFound, "Error updating customer");
             }
             catch (Exception ex)
             {

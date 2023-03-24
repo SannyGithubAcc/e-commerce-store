@@ -1,4 +1,6 @@
-﻿using e_commerce_store.Models.Dto.Order;
+﻿using AutoMapper;
+using e_commerce_store.Exceptions;
+using e_commerce_store.Models.Dto.Order;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
@@ -10,21 +12,26 @@ namespace e_commerce_store.Controllers
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderService _OrderService;
 
-        public OrderController(IOrderService orderService)
+
+        private readonly IOrderService _OrderService;
+        private readonly IMapper _mapper;
+        private readonly ILogger<CustomerController> _logger;
+
+        public OrderController(  IOrderService OrderService, IMapper mapper, ILogger<CustomerController> logger)
         {
-            _OrderService = orderService;
+            _OrderService = OrderService;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<OrderDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<OrderDto>), (int)HttpStatusCode.OK)]
         public IActionResult GetAll()
         {
             var orders = _OrderService.GetAllAsync();
             try
             {
-  
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -34,22 +41,32 @@ namespace e_commerce_store.Controllers
 
         }
 
+    
+
+
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(OrderDto), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public IActionResult GetById(int id)
+        [SwaggerOperation(Summary = "Get a Order by id")]
+        public async Task<ActionResult<OrderDto>> GetOrderById(int id)
         {
-            var order = _OrderService.GetByIdAsync(id);
-
-            if (order == null)
+            try
             {
-                return NotFound();
+                var order = await _OrderService.GetByIdAsync(id);
+                if (order == null) return NotFound();
+                return Ok(order);
             }
-
-            return Ok(order);
+            catch (CustomException ex)
+            {
+                _logger.LogError(ex, $"Error getting customer with id {id}");
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting customer with id {id}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error getting customer");
+            }
         }
 
-    
+
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -65,7 +82,7 @@ namespace e_commerce_store.Controllers
             var order = await _OrderService.CreateAsync(createDto);
            
 
-            return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
+            return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
         }
 
         [HttpPut("{id}")]

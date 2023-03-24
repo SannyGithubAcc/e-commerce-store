@@ -25,14 +25,14 @@ public class ProductService : IProductService
         return _mapper.Map<ProductDto>(product);
     }
 
-    public async Task<ProductDto> CreateProductAsync(CreateUpdateProductDto productDto)
+    public async Task<ProductDto> CreateProductAsync(CreateProductDto productDto)
     {
         var product = _mapper.Map<Product>(productDto);
         var createdProduct = await _productRepository.CreateProductAsync(product);
         return _mapper.Map<ProductDto>(createdProduct);
     }
 
-    public async Task<ProductDto> UpdateProductAsync(int id, CreateUpdateProductDto productDto)
+    public async Task<ProductDto> UpdateProductAsync(int id, UpdateProductDto productDto)
     {
         var product = _mapper.Map<Product>(productDto);
         var updatedProduct = await _productRepository.UpdateProductAsync(id, product);

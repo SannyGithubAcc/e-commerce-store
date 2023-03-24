@@ -52,7 +52,7 @@ namespace e_commerce_store.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<OrderDto>> CreateProduct([FromBody] CreateUpdateProductDto productDto)
+        public async Task<ActionResult<OrderDto>> CreateProduct([FromBody] CreateProductDto productDto)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace e_commerce_store.Controllers
         [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<OrderDto>> UpdateProduct(int id, [FromBody] CreateUpdateProductDto productDto)
+        public async Task<ActionResult<OrderDto>> UpdateProduct(int id, [FromBody] UpdateProductDto productDto)
         {
             try
             {

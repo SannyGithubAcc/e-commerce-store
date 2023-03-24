@@ -10,7 +10,7 @@ namespace e_commerce_store.Models
         public string Description { get; set; }
         public string Price { get; set; }
 
-        public List<CustomerMembership> CustomerMemberships { get; set; }
+
     }
 
 }

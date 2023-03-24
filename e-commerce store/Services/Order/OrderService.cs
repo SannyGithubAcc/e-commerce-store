@@ -16,13 +16,15 @@ public class OrderService : IOrderService
     public async Task<OrderDto> GetByIdAsync(int id)
     {
         var Order = await _OrderRepository.GetByIdAsync(id);
-        return _mapper.Map<OrderDto>(Order);
+        var orderDto =  _mapper.Map<OrderDto>(Order);
+        return orderDto;
     }
 
     public async Task<List<OrderDto>> GetAllAsync()
     {
         var Orders = await _OrderRepository.GetAllAsync();
-        return _mapper.Map<List<OrderDto>>(Orders);
+        var orderDtos = _mapper.Map<List<OrderDto>>(Orders);
+        return orderDtos;
     }
 
     public async Task<OrderDto> CreateAsync(CreateOrderDto createOrderDto)

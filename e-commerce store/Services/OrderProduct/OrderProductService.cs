@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using e_commerce_store.Models.DBModels;
 using e_commerce_store.Models.Dto.Order;
-using e_commerce_store.Models.Dto.OrderProduct;
 
 public class OrderProductService : IOrderProductService
 {
