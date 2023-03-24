@@ -28,7 +28,7 @@ public class CustomerRepositoryTests
     {
         // Arrange
         var repository = new CustomerRepository(_dbContext);
-        var customer = new Customer { Name = "John Doe", Email = "johndoe@example.com",Phone = "22222" };
+        var customer = new Customer { Name = "John Doe", Email = "johndoe@example.com",Phone = "22222",IsActive=true };
 
         // Act
         var result = await repository.AddCustomer(customer);
